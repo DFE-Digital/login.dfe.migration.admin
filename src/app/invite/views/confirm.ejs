@@ -1,0 +1,57 @@
+<div class="grid-row">
+    <div class="col-12">
+        <h1 class="heading-xlarge">
+            Invite test tester
+        </h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="col-12">
+        <dl class="rows">
+            <dt>Username</dt>
+            <dd><%=user.username%></dd>
+
+            <dt>First name</dt>
+            <dd><%=user.firstName%></dd>
+
+            <dt>Last name</dt>
+            <dd><%=user.lastName%></dd>
+
+            <dt>Email</dt>
+            <dd><%=user.email%></dd>
+
+            <dt>Org</dt>
+            <dd><%=user.organisation%></dd>
+
+            <dt>Services</dt>
+            <dd>
+                <% for (let i = 0; i < user.services.length; i++) {%>
+                <span style="display:block;"><%=user.services[i].name%> (<%=user.services[i].role.name%>)</span>
+                <% } %>
+            </dd>
+        </dl>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="col-12">
+        <form method="post" id="form-migrate-seasrch">
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+            <div class="form-submit">
+                <a href="/">Cancel</a>
+                <button type="submit" class="button">Invite</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<style>
+    .form-submit {
+        text-align: right;
+    }
+    .form-submit a {
+        display: inline-block;
+        margin-top: 9px;
+        margin-right: 10px;
+    }
+</style>
