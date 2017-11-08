@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "settings='./config/login.dfe.migrations.admin.dev.json' node src/index.js",
-    "test": "./node_module/.bin/jest"
+    "test": "./node_modules/.bin/jest"
   },
   "engines": {
     "node": "8.x.x"
@@ -22,11 +22,15 @@
   "homepage": "https://github.com/DFE-Digital/login.dfe.migration.admin#readme",
   "dependencies": {
     "body-parser": "^1.18.1",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.5.7",
     "express": "^4.15.4",
     "express-ejs-layouts": "^2.3.1",
+    "express-session": "^1.15.6",
     "lodash": "^4.17.4",
     "morgan": "^1.9.0",
+    "openid-client": "^1.17.0",
+    "passport": "^0.4.0",
     "winston": "^2.4.0",
     "winston-redis": "^1.0.0"
   },
