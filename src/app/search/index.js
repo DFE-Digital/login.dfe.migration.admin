@@ -1,13 +1,14 @@
 'use strict';
 
 const express = require('express');
-const logger = require('../../infrastructure/logger');
 const router = express.Router({ mergeParams: true });
 
+const getSearch = require('./getSearch');
+const postSearch = require('./postSearch');
+
 const routes = () => {
-  router.get('/', (req, res) => {
-    res.send('fdkjskljsfl');
-  });
+  router.get('/', getSearch);
+  router.post('/', postSearch);
 
   return router;
 };

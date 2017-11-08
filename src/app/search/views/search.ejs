@@ -1,0 +1,72 @@
+<div class="grid-row">
+    <div class="col-12">
+        <h1 class="heading-xlarge">
+            Search for user to migrate
+        </h1>
+        <form method="post" id="form-migrate-seasrch">
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+            <fieldset>
+                <legend class="vh">Search for user to migrate</legend>
+                <div class="form-group search-criteria">
+                    <label class="vh" for="criteria">Old secure access username or email address</label>
+                    <input class="form-control full-width" id="criteria" name="criteria" type="text" required aria-required="true" placeholder="Username or email address"
+                        value="<%=criteria%>" />
+                </div>
+                <div class="form-submit">
+                    <button type="submit" class="button">Search</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<% if (locals.users) {%>
+<div class="grid-row">
+    <div class="col-12">
+        <% if (locals.users.length > 0) { %>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Org.</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (let i = 0; i < locals.users.length; i++) { %>
+            <% const user = locals.users[i]; %>
+            <tr>
+                <td><%=user.firstName%> <%=user.lastName.toUpperCase()%></td>
+                <td><%=user.email%></td>
+                <td><%=user.username%></td>
+                <td><%=user.organisation%></td>
+                <td><a href="/invite/<%=user.username%>">Invite</a></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <% } else { %>
+        <div style="font-weight: bold;">No users match your criteria</div>
+        <% } %>
+    </div>
+</div>
+<% } %>
+
+<style>
+    .form-control.full-width {
+        width: 100%;
+        margin-right: 200px;
+    }
+    .search-criteria {
+        display: inline-block;
+        width: 80%
+    }
+    .form-submit {
+        display: inline-block;
+        width: 18%;
+        position: relative;
+        top: -8px;
+    }
+</style>

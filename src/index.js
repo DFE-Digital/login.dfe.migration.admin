@@ -9,6 +9,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const passport = require('passport');
+const csrf = require('csurf');
 const { getPassportStrategy } = require('./infrastructure/oidc');
 const { isLoggedIn } = require('./infrastructure/utils');
 
@@ -66,6 +67,7 @@ const init = async () => {
 
   // Postbacks
   app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(csrf({ cookie: true }))
 
   // Logging
   app.use(morgan('combined', { stream: fs.createWriteStream('./access.log', { flags: 'a' }) }));
