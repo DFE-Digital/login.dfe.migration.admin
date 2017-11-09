@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const passport = require('passport');
 const csrf = require('csurf');
+const flash = require('express-flash-2');
 const { getPassportStrategy } = require('./infrastructure/oidc');
 const { isLoggedIn } = require('./infrastructure/utils');
 
@@ -68,7 +69,8 @@ const init = async () => {
 
   // Postbacks
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(csrf({ cookie: true }))
+  app.use(csrf({ cookie: true }));
+  app.use(flash());
 
   // Logging
   app.use(morgan('combined', { stream: fs.createWriteStream('./access.log', { flags: 'a' }) }));
