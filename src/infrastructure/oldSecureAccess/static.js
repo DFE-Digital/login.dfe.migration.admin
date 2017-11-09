@@ -4,7 +4,10 @@ const users = [
     lastName: 'Stark',
     email: 'tony.stark@stark-industries.test',
     username: 'ironman',
-    organisation: 'Some School',
+    organisation: {
+      id: 'org1',
+      name: 'Some School',
+    },
     services: [
       {
         id: 'svc1',
@@ -26,8 +29,8 @@ const users = [
 
 const searchForUsers = async (criteria) => {
   return users.filter((user) => {
-    return user.email.toLowerCase() === criteria.toLowerCase()
-      || user.username.toLowerCase() === criteria.toLowerCase();
+    return user.email.toLowerCase().includes(criteria.toLowerCase())
+      || user.username.toLowerCase().includes(criteria.toLowerCase());
   })
 };
 
