@@ -4,7 +4,10 @@ const users = [
     lastName: 'Stark',
     email: 'tony.stark@stark-industries.test',
     username: 'ironman',
-    organisation: 'Some School',
+    organisation: {
+      id: 'org1',
+      name: 'Some School',
+    },
     services: [
       {
         id: 'svc1',

@@ -41,7 +41,7 @@
                 <td><%=user.firstName%> <%=user.lastName.toUpperCase()%></td>
                 <td><%=user.email%></td>
                 <td><%=user.username%></td>
-                <td><%=user.organisation%></td>
+                <td><%=user.organisation.name%></td>
                 <td><a href="/invite/<%=user.username%>">Invite</a></td>
             </tr>
             <% } %>
