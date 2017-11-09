@@ -3,6 +3,18 @@
 const { Op } = require('sequelize');
 const { users, organisations } = require('./schemas/legacySecureAccess.schema');
 
+const mapUserEntity = (user) => {
+  return {
+    firstName: 'fix',// user.dataValues.first_name,
+    lastName: 'this', // user.dataValues.last_name,
+    email: user.dataValues.email,
+    username : user.dataValues.username,
+    organisation: {
+      name: user.org.dataValues.name
+    }
+  }
+}
+
 const searchForUsers = async (criteria) => {
   try {
     const userEntities = await users.findAll({
@@ -14,26 +26,28 @@ const searchForUsers = async (criteria) => {
       },
       include: ['org']
     });
-    return userEntities.map((user) => {
-      return {
-        firstName: 'fix',// user.dataValues.first_name,
-        lastName: 'this', // user.dataValues.last_name,
-        email: user.dataValues.email,
-        username : user.dataValues.username,
-        organisation: {
-          name: user.org.dataValues.name
-        }
-      }
-    });
+    return userEntities.map(mapUserEntity);
   }
   catch (e) {
     throw e;
   }
-  return Promse.reject('not implemented');
 };
 
 const getUserByUsername = async (username) => {
-  return Promse.reject('not implemented');
+  try {
+    const userEntity = await users.find({
+      where: {
+        username: {
+          [Op.eq]: username,
+        },
+      },
+      include: ['org']
+    });
+    return mapUserEntity(userEntity);
+  }
+  catch (e) {
+    throw e;
+  }
 };
 
 module.exports = {

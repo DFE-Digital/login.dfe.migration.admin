@@ -29,8 +29,8 @@ const users = [
 
 const searchForUsers = async (criteria) => {
   return users.filter((user) => {
-    return user.email.toLowerCase() === criteria.toLowerCase()
-      || user.username.toLowerCase() === criteria.toLowerCase();
+    return user.email.toLowerCase().includes(criteria.toLowerCase())
+      || user.username.toLowerCase().includes(criteria.toLowerCase());
   })
 };
 
