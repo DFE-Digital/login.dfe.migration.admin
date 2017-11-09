@@ -14,6 +14,7 @@ const { getPassportStrategy } = require('./infrastructure/oidc');
 const { isLoggedIn } = require('./infrastructure/utils');
 
 const search = require('./app/search');
+const invite = require('./app/invite');
 
 const app = express();
 const config = require('./infrastructure/config');
@@ -81,6 +82,7 @@ const init = async () => {
 
   // Routes
   app.use('/', search());
+  app.use('/invite', invite());
 
   // Http listener
   if (config.hostingEnvironment.env === 'dev') {
