@@ -21,12 +21,12 @@
             <dd><%=user.email%></dd>
 
             <dt>Org</dt>
-            <dd><%=user.organisation%></dd>
+            <dd><%=user.organisation.name%></dd>
 
             <dt>Services</dt>
             <dd>
                 <% for (let i = 0; i < user.services.length; i++) {%>
-                <span style="display:block;"><%=user.services[i].name%> (<%=user.services[i].role.name%>)</span>
+                <span style="display:block;"><%=user.services[i].name%> <span style="font-size: 80%; font-style: italic;">(<%=user.services[i].role.name%>)</span></span>
                 <% } %>
             </dd>
         </dl>
