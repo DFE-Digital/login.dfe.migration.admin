@@ -18,11 +18,20 @@ const users = db.define('safe_user', {
   username: {
     type: Sequelize.STRING,
   },
+  first_name: {
+    type: Sequelize.BLOB,
+  },
+  last_name: {
+    type: Sequelize.BLOB,
+  },
+
   organisation: {
+    as: 'org_id',
     type: Sequelize.BIGINT,
   },
 }, {
   tableName: 'safe_user',
+  timestamps  : false,
 });
 
 const organisations = db.define('organisation', {
@@ -35,10 +44,11 @@ const organisations = db.define('organisation', {
   },
 }, {
   tableName: 'organisation',
+  timestamps  : false,
 });
 
 
-users.hasOne(organisations, { as: 'organisation', foreignKey: 'organisation' });
+users.belongsTo(organisations, { as: 'org', foreignKey: 'organisation' });
 
 module.exports = {
   users,
