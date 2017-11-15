@@ -33,6 +33,7 @@
     "login.dfe.migration.admin.jobs.client": "git+https://github.com/DFE-Digital/login.dfe.migration.admin.jobs.client.git",
     "morgan": "^1.9.0",
     "openid-client": "^1.17.0",
+    "openpgp": "^2.5.13",
     "passport": "^0.4.0",
     "pg": "^7.4.0",
     "sequelize": "^4.22.5",

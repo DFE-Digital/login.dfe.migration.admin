@@ -1,8 +1,10 @@
 'use strict';
 
+const openpgp = require('openpgp');
 const { uniqBy } = require('lodash');
 const { Op } = require('sequelize');
 const { users, applications } = require('./schemas/legacySecureAccess.schema');
+const config = require('./../config');
 
 const roleMapping = [
   { osa: 'end_user', nsa: { id: 0, name: 'End user' } },
@@ -14,6 +16,17 @@ const serviceMapping = [
   { code: 'S2S', id: '8c3b6436-8249-4c73-8a35-fceb18cf7bf1' },
   { code: 'Edubase', id: 'da634158-f6ae-4b6a-903c-805be7fd5390' },
 ];
+
+const decrypt = async (cipheredArray) => {
+    const options = {
+      message: openpgp.message.read(cipheredArray),
+      password: config.oldSecureAccess.params.decryptionKey,
+      format: 'utf8'
+    };
+
+    const decrypted = await openpgp.decrypt(options);
+    return decrypted.data;
+};
 
 const mapUserEntity = async (user) => {
   const userApplications = uniqBy(user.groups.map((group) => {
@@ -68,9 +81,12 @@ const mapUserEntity = async (user) => {
     return 0;
   });
 
+  const firstName = await decrypt(user.dataValues.first_name);
+  const lastName = await decrypt(user.dataValues.last_name);
+
   return {
-    firstName: 'fix',// user.dataValues.first_name,
-    lastName: 'this', // user.dataValues.last_name,
+    firstName,
+    lastName,
     email: user.dataValues.email,
     username: user.dataValues.username,
     password: user.dataValues.password,
