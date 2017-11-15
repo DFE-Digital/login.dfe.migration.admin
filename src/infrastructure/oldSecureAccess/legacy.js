@@ -17,21 +17,15 @@ const serviceMapping = [
   { code: 'Edubase', id: 'da634158-f6ae-4b6a-903c-805be7fd5390' },
 ];
 
-const decrypt = (cipheredArray) => {
-  return new Promise((resolve, reject) => {
+const decrypt = async (cipheredArray) => {
     const options = {
       message: openpgp.message.read(cipheredArray),
       password: config.oldSecureAccess.params.decryptionKey,
       format: 'utf8'
     };
 
-    openpgp.decrypt(options)
-      .then((decrypted) => {
-        resolve(decrypted.data);
-      }).catch((err) => {
-        reject(err);
-      });
-  });
+    const decrypted = await openpgp.decrypt(options);
+    return decrypted.data;
 };
 
 const mapUserEntity = async (user) => {
