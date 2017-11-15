@@ -8,6 +8,12 @@ const roleMapping = [
   { osa: 'end_user', nsa: { id: 0, name: 'End user' } },
   { osa: 'approver', nsa: { id: 10000, name: 'Approver' } },
 ];
+const serviceMapping = [
+  { code: 'KTS', id: '3bfde961-f061-4786-b618-618deaf96e44' },
+  { code: 'COLLECT', id: 'fb27f118-c7cc-4ce4-a2aa-6255cfd34cf0' },
+  { code: 'S2S', id: '8c3b6436-8249-4c73-8a35-fceb18cf7bf1' },
+  { code: 'Edubase', id: 'da634158-f6ae-4b6a-903c-805be7fd5390' },
+];
 
 const mapUserEntity = async (user) => {
   const userApplications = uniqBy(user.groups.map((group) => {
@@ -32,7 +38,7 @@ const mapUserEntity = async (user) => {
         return 1;
       }
       return 0;
-    });
+    }).filter((role) => role != null);
 
   const services = (await Promise.all(userApplications.map(async (application) => {
     const applicationEntity = await applications.find({
@@ -42,12 +48,17 @@ const mapUserEntity = async (user) => {
         },
       },
     });
+    console.log(`looking for mapping for ${applicationEntity.code}`);
+    const newAppMap = serviceMapping.find((x) => x.code === applicationEntity.code);
+    if (!newAppMap) {
+      return null;
+    }
     return {
-      id: application.id,
+      id: newAppMap.id,
       name: applicationEntity.dataValues.name,
-      role: userRoles[0].nsa,
+      role: userRoles.length > 0 ? userRoles[0].nsa : null,
     };
-  }))).sort((x, y) => {
+  }))).filter((x) => x != null).sort((x, y) => {
     if (x.name < y.name) {
       return -1;
     }
@@ -62,7 +73,10 @@ const mapUserEntity = async (user) => {
     lastName: 'this', // user.dataValues.last_name,
     email: user.dataValues.email,
     username: user.dataValues.username,
+    password: user.dataValues.password,
+    salt: user.dataValues.salt,
     organisation: {
+      id: '72711ff9-2da1-4135-8a20-3de1fea31073',
       name: user.org.dataValues.name
     },
     services,

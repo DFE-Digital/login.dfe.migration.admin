@@ -24,6 +24,12 @@ const users = db.define('safe_user', {
   last_name: {
     type: Sequelize.BLOB,
   },
+  password: {
+    type: Sequelize.STRING,
+  },
+  salt: {
+    type: Sequelize.STRING,
+  },
 
   organisation: {
     as: 'org_id',
@@ -79,6 +85,9 @@ const applications = db.define('customer_application', {
   id: {
     type: Sequelize.BIGINT,
     primaryKey: true,
+  },
+  code: {
+    type: Sequelize.STRING,
   },
   name: {
     type: Sequelize.STRING,
