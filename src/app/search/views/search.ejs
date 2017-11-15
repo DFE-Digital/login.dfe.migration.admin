@@ -1,5 +1,12 @@
+
 <div class="grid-row">
     <div class="col-12">
+        <% if (locals.flash.info) { %>
+        <div class="notification notification-success">
+            <%=locals.flash.info%>
+        </div>
+        <% } %>
+
         <h1 class="heading-xlarge">
             Search for user to migrate
         </h1>

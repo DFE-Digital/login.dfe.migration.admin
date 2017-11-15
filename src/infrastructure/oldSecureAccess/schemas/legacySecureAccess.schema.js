@@ -24,6 +24,12 @@ const users = db.define('safe_user', {
   last_name: {
     type: Sequelize.BLOB,
   },
+  password: {
+    type: Sequelize.STRING,
+  },
+  salt: {
+    type: Sequelize.STRING,
+  },
 
   organisation: {
     as: 'org_id',
@@ -47,10 +53,58 @@ const organisations = db.define('organisation', {
   timestamps  : false,
 });
 
+const userToGroupMapping = db.define('safe_user_to_user_group', {
+  safe_user: {
+    type: Sequelize.BIGINT,
+  },
+  user_group: {
+    type: Sequelize.BIGINT,
+  },
+}, {
+  tableName: 'safe_user_to_user_group',
+  timestamps  : false,
+});
+
+const groups = db.define('user_group', {
+  id: {
+    type: Sequelize.BIGINT,
+    primaryKey: true,
+  },
+  code: {
+    type: Sequelize.BIGINT,
+  },
+  application: {
+    type: Sequelize.STRING,
+  },
+}, {
+  tableName: 'user_group',
+  timestamps  : false,
+});
+
+const applications = db.define('customer_application', {
+  id: {
+    type: Sequelize.BIGINT,
+    primaryKey: true,
+  },
+  code: {
+    type: Sequelize.STRING,
+  },
+  name: {
+    type: Sequelize.STRING,
+  },
+}, {
+  tableName: 'customer_application',
+  timestamps  : false,
+});
+
 
 users.belongsTo(organisations, { as: 'org', foreignKey: 'organisation' });
+users.belongsToMany(groups, { as: 'groups', through: 'safe_user_to_user_group', foreignKey: 'safe_user', otherKey: 'user_group' });
 
 module.exports = {
   users,
   organisations,
+  userToGroupMapping,
+  groups,
+  applications
 };
