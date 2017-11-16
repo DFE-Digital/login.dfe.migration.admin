@@ -9,6 +9,8 @@ const config = require('./../config');
 const roleMapping = [
   { osa: 'end_user', nsa: { id: 0, name: 'End user' } },
   { osa: 'approver', nsa: { id: 10000, name: 'Approver' } },
+  { osa: 'super_admin', nsa: { id: 10000, name: 'Approver' } },
+  { osa: 'administrator', nsa: { id: 10000, name: 'Approver' } },
 ];
 const serviceMapping = [
   { code: 'KTS', id: '3bfde961-f061-4786-b618-618deaf96e44' },
@@ -71,7 +73,7 @@ const mapUserEntity = async (user) => {
       name: applicationEntity.dataValues.name,
       role: userRoles.length > 0 ? userRoles[0].nsa : null,
     };
-  }))).filter((x) => x != null).sort((x, y) => {
+  }))).filter((x) => x != null && x.role != null).sort((x, y) => {
     if (x.name < y.name) {
       return -1;
     }
