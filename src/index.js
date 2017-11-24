@@ -21,6 +21,9 @@ const app = express();
 const config = require('./infrastructure/config');
 
 const init = async () => {
+  const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
+  validateConfigAndQuitOnError(migrationAdminSchema, config, logger);
+
   // Session
   app.use(cookieParser());
   app.use(session({
