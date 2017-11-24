@@ -30,6 +30,7 @@
     "express-flash-2": "^1.0.1",
     "express-session": "^1.15.6",
     "lodash": "^4.17.4",
+    "login.dfe.config.schema": "git+https://github.com/DFE-Digital/login.dfe.config.schema.git",
     "login.dfe.migration.admin.jobs.client": "git+https://github.com/DFE-Digital/login.dfe.migration.admin.jobs.client.git",
     "morgan": "^1.9.0",
     "openid-client": "^1.17.0",
