@@ -3,7 +3,7 @@
 const openpgp = require('openpgp');
 const { uniqBy } = require('lodash');
 const { Op } = require('sequelize');
-const { users, applications } = require('./schemas/legacySecureAccess.schema');
+const { users, applications, organisations } = require('./schemas/legacySecureAccess.schema');
 const config = require('./../config');
 
 const roleMapping = [
@@ -20,14 +20,17 @@ const serviceMapping = [
 ];
 
 const decrypt = async (cipheredArray) => {
-    const options = {
-      message: openpgp.message.read(cipheredArray),
-      password: config.oldSecureAccess.params.decryptionKey,
-      format: 'utf8'
-    };
+  if (!cipheredArray) {
+    return '';
+  }
+  const options = {
+    message: openpgp.message.read(cipheredArray),
+    password: config.oldSecureAccess.params.decryptionKey,
+    format: 'utf8'
+  };
 
-    const decrypted = await openpgp.decrypt(options);
-    return decrypted.data;
+  const decrypted = await openpgp.decrypt(options);
+  return decrypted.data;
 };
 
 const mapUserEntity = async (user) => {
@@ -63,7 +66,6 @@ const mapUserEntity = async (user) => {
         },
       },
     });
-    console.log(`looking for mapping for ${applicationEntity.code}`);
     const newAppMap = serviceMapping.find((x) => x.code === applicationEntity.code);
     if (!newAppMap) {
       return null;
@@ -103,12 +105,28 @@ const mapUserEntity = async (user) => {
 
 const searchForUsers = async (criteria) => {
   try {
+    const orgEntities = await organisations.findAll({
+      where: {
+        name: { [Op.like]: `%${criteria}%` }
+      }
+    });
+
+    const userQueryOr = [
+      { username: { [Op.like]: `%${criteria}%` } },
+      { email: { [Op.like]: `%${criteria}%` } },
+    ];
+    if (orgEntities && orgEntities.length > 0) {
+      const orgIds = orgEntities.map((e) => {
+        return e.id
+      });
+      userQueryOr.push({
+        organisation: { [Op.in]: orgIds }
+      });
+    }
+
     const userEntities = await users.findAll({
       where: {
-        [Op.or]: [
-          { username: { [Op.like]: `%${criteria}%` } },
-          { email: { [Op.like]: `%${criteria}%` } },
-        ]
+        [Op.or]: userQueryOr
       },
       include: ['org', 'groups']
     });
