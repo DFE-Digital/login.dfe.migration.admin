@@ -2,7 +2,7 @@ const config = require('./../../config');
 const Sequelize = require('sequelize');
 
 if (!config.oldSecureAccess.params || !config.oldSecureAccess.params.legacyConnectionString) {
-  throw new Error('Must provide config oldSecureAccess.params.legacyConnectionString')
+  throw new Error('Must provide config oldSecureAccess.params.legacyConnectionString');
 }
 
 const db = new Sequelize(config.oldSecureAccess.params.legacyConnectionString);
@@ -37,7 +37,7 @@ const users = db.define('safe_user', {
   },
 }, {
   tableName: 'safe_user',
-  timestamps  : false,
+  timestamps: false,
 });
 
 const organisations = db.define('organisation', {
@@ -50,7 +50,7 @@ const organisations = db.define('organisation', {
   },
 }, {
   tableName: 'organisation',
-  timestamps  : false,
+  timestamps: false,
 });
 
 const userToGroupMapping = db.define('safe_user_to_user_group', {
@@ -62,7 +62,7 @@ const userToGroupMapping = db.define('safe_user_to_user_group', {
   },
 }, {
   tableName: 'safe_user_to_user_group',
-  timestamps  : false,
+  timestamps: false,
 });
 
 const groups = db.define('user_group', {
@@ -78,7 +78,7 @@ const groups = db.define('user_group', {
   },
 }, {
   tableName: 'user_group',
-  timestamps  : false,
+  timestamps: false,
 });
 
 const applications = db.define('customer_application', {
@@ -94,7 +94,7 @@ const applications = db.define('customer_application', {
   },
 }, {
   tableName: 'customer_application',
-  timestamps  : false,
+  timestamps: false,
 });
 
 
@@ -106,5 +106,5 @@ module.exports = {
   organisations,
   userToGroupMapping,
   groups,
-  applications
+  applications,
 };

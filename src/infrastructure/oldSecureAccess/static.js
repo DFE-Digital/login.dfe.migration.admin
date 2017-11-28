@@ -27,16 +27,10 @@ const users = [
   },
 ];
 
-const searchForUsers = async (criteria) => {
-  return users.filter((user) => {
-    return user.email.toLowerCase().includes(criteria.toLowerCase())
-      || user.username.toLowerCase().includes(criteria.toLowerCase());
-  })
-};
+const searchForUsers = async criteria => users.filter(user => user.email.toLowerCase().includes(criteria.toLowerCase())
+      || user.username.toLowerCase().includes(criteria.toLowerCase()));
 
-const getUserByUsername = async (username) => {
-  return users.find((user) => user.username.toLowerCase() === username.toLowerCase());
-};
+const getUserByUsername = async username => users.find(user => user.username.toLowerCase() === username.toLowerCase());
 
 module.exports = {
   searchForUsers,

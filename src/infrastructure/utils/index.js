@@ -3,7 +3,7 @@ const isLoggedIn = (req, res, next) => {
     return next();
   }
   req.session.redirectUrl = req.originalUrl;
-  return res.status(302).redirect(`/auth`);
+  return res.status(302).redirect('/auth');
 };
 
 module.exports = { isLoggedIn };
