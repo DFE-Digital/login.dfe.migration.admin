@@ -19,9 +19,9 @@ const invite = require('./app/invite');
 
 const app = express();
 const config = require('./infrastructure/config');
+const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
 
 const init = async () => {
-  const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
   validateConfigAndQuitOnError(migrationAdminSchema, config, logger);
 
   // Session
@@ -29,22 +29,22 @@ const init = async () => {
   app.use(session({
     resave: true,
     saveUninitialized: true,
-    secret: config.hostingEnvironment.sessionSecret
+    secret: config.hostingEnvironment.sessionSecret,
   }));
 
   // Auth
   passport.use('oidc', await getPassportStrategy());
-  passport.serializeUser(function (user, done) {
+  passport.serializeUser((user, done) => {
     done(null, user);
   });
-  passport.deserializeUser(function (user, done) {
+  passport.deserializeUser((user, done) => {
     done(null, user);
   });
   app.use(passport.initialize());
   app.use(passport.session());
   app.get('/auth', passport.authenticate('oidc'));
   app.get('/auth/cb', (req, res, next) => {
-    passport.authenticate('oidc', (err, user, info) => {
+    passport.authenticate('oidc', (err, user) => {
       let redirectUrl = '/';
 
       if (err) {
@@ -59,14 +59,14 @@ const init = async () => {
         req.session.redirectUrl = null;
       }
 
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
+      return req.logIn(user, (errLogin) => {
+        if (errLogin) {
+          return next(errLogin);
         }
         if (redirectUrl.endsWith('signout/complete')) redirectUrl = '/';
-        res.redirect(redirectUrl);
+        return res.redirect(redirectUrl);
       });
-    })(req, res, next)
+    })(req, res, next);
   });
   app.use(isLoggedIn);
 

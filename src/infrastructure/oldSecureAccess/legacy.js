@@ -26,7 +26,7 @@ const decrypt = async (cipheredArray) => {
   const options = {
     message: openpgp.message.read(cipheredArray),
     password: config.oldSecureAccess.params.decryptionKey,
-    format: 'utf8'
+    format: 'utf8',
   };
 
   const decrypted = await openpgp.decrypt(options);
@@ -34,19 +34,13 @@ const decrypt = async (cipheredArray) => {
 };
 
 const mapUserEntity = async (user) => {
-  const userApplications = uniqBy(user.groups.map((group) => {
-    return {
-      id: group.application,
-    };
-  }), (item) => {
-    return item.id;
-  }).filter((application) => application.id !== 1);
+  const userApplications = uniqBy(user.groups.map(group => ({
+    id: group.application,
+  })), item => item.id).filter(application => application.id !== 1);
 
-  const userRoles = user.groups.filter((group) => group.application == 1)
-    .map((group) => {
-      return roleMapping.find((mapping) => mapping.osa === group.code);
-    }).sort((x, y) => {
-      if (x == null) {
+  const userRoles = user.groups.filter(group => group.application === 1)
+    .map(group => roleMapping.find(mapping => mapping.osa === group.code)).sort((x, y) => {
+      if (x === null) {
         return 1;
       }
       if (x.nsa.id > y.nsa.id) {
@@ -56,7 +50,7 @@ const mapUserEntity = async (user) => {
         return 1;
       }
       return 0;
-    }).filter((role) => role != null);
+    }).filter(role => role !== null);
 
   const services = (await Promise.all(userApplications.map(async (application) => {
     const applicationEntity = await applications.find({
@@ -66,7 +60,7 @@ const mapUserEntity = async (user) => {
         },
       },
     });
-    const newAppMap = serviceMapping.find((x) => x.code === applicationEntity.code);
+    const newAppMap = serviceMapping.find(x => x.code === applicationEntity.code);
     if (!newAppMap) {
       return null;
     }
@@ -75,7 +69,7 @@ const mapUserEntity = async (user) => {
       name: applicationEntity.dataValues.name,
       role: userRoles.length > 0 ? userRoles[0].nsa : null,
     };
-  }))).filter((x) => x != null && x.role != null).sort((x, y) => {
+  }))).filter(x => x !== null && x.role !== null).sort((x, y) => {
     if (x.name < y.name) {
       return -1;
     }
@@ -97,18 +91,18 @@ const mapUserEntity = async (user) => {
     salt: user.dataValues.salt,
     organisation: {
       id: '72711ff9-2da1-4135-8a20-3de1fea31073',
-      name: user.org.dataValues.name
+      name: user.org.dataValues.name,
     },
     services,
-  }
+  };
 };
 
 const searchForUsers = async (criteria) => {
   try {
     const orgEntities = await organisations.findAll({
       where: {
-        name: { [Op.like]: `%${criteria}%` }
-      }
+        name: { [Op.like]: `%${criteria}%` },
+      },
     });
 
     const userQueryOr = [
@@ -116,23 +110,20 @@ const searchForUsers = async (criteria) => {
       { email: { [Op.like]: `%${criteria}%` } },
     ];
     if (orgEntities && orgEntities.length > 0) {
-      const orgIds = orgEntities.map((e) => {
-        return e.id
-      });
+      const orgIds = orgEntities.map(e => e.id);
       userQueryOr.push({
-        organisation: { [Op.in]: orgIds }
+        organisation: { [Op.in]: orgIds },
       });
     }
 
     const userEntities = await users.findAll({
       where: {
-        [Op.or]: userQueryOr
+        [Op.or]: userQueryOr,
       },
-      include: ['org', 'groups']
+      include: ['org', 'groups'],
     });
     return await Promise.all(userEntities.map(mapUserEntity));
-  }
-  catch (e) {
+  } catch (e) {
     throw e;
   }
 };
@@ -145,11 +136,10 @@ const getUserByUsername = async (username) => {
           [Op.eq]: username,
         },
       },
-      include: ['org', 'groups']
+      include: ['org', 'groups'],
     });
     return mapUserEntity(userEntity);
-  }
-  catch (e) {
+  } catch (e) {
     throw e;
   }
 };
