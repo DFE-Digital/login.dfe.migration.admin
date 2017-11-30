@@ -1,4 +1,4 @@
-jest.mock('./../../../src/infrastructure/oldSecureAccess', () => {
+jest.mock('./../../../src/app/search/searchAdapter', () => {
   return {
     searchForUsers: jest.fn().mockReturnValue([]),
   };
@@ -10,7 +10,7 @@ const postSearch = require('./../../../src/app/search/postSearch');
 describe('when handling search request', () => {
   let req;
   let res;
-  let oldSecureAccess;
+  let searchAdapter;
 
   beforeEach(() => {
     req = {
@@ -19,12 +19,13 @@ describe('when handling search request', () => {
       },
       body: {
         criteria: 'someuser',
+        system: 'ABC',
       }
     };
 
     res = httpMocks.createResponse();
 
-    oldSecureAccess = require('./../../../src/infrastructure/oldSecureAccess');
+    searchAdapter = require('./../../../src/app/search/searchAdapter');
   });
 
   it('then it should render search view', async () => {
@@ -78,11 +79,19 @@ describe('when handling search request', () => {
         },
       ],
     }];
-    oldSecureAccess.searchForUsers.mockReturnValue(users);
+    searchAdapter.searchForUsers.mockReturnValue(users);
 
     await postSearch(req, res);
 
     const model = res._getRenderData();
     expect(model.users).toBe(users);
+  });
+
+  it('then it search using posted system and critria', async () => {
+    await postSearch(req, res);
+
+    expect(searchAdapter.searchForUsers.mock.calls.length).toBe(1);
+    expect(searchAdapter.searchForUsers.mock.calls[0][0]).toBe('ABC');
+    expect(searchAdapter.searchForUsers.mock.calls[0][1]).toBe('someuser');
   });
 });

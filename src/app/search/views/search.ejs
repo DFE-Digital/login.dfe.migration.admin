@@ -15,6 +15,13 @@
             <fieldset>
                 <legend class="vh">Search for user to migrate</legend>
                 <div class="form-group search-criteria">
+                    <label for="system">System to search in</label>
+                    <select class="form-control" id="system" name="system">
+                        <option value="OSA" <%=(system==='OSA' ? 'selected' : '')%>>OSA</option>
+                        <option value="EAS" <%=(system==='EAS' ? 'selected' : '')%>>EAS</option>
+                    </select>
+                </div>
+                <div class="form-group search-criteria">
                     <label class="vh" for="criteria">Old secure access username, email address or organisation</label>
                     <input class="form-control full-width" id="criteria" name="criteria" type="text" required aria-required="true" placeholder="Username, email address or organisation"
                         value="<%=criteria%>" />
