@@ -1,3 +1,5 @@
+<a href="/" class="link-back">Back</a>
+
 <div class="grid-row">
     <div class="col-12">
         <h1 class="heading-xlarge">
@@ -7,6 +9,7 @@
 </div>
 <div class="grid-row">
     <div class="col-12">
+
         <dl class="rows">
             <dt>Username</dt>
             <dd><%=user.username%></dd>
@@ -21,37 +24,31 @@
             <dd><%=user.email%></dd>
 
             <dt>Org</dt>
-            <dd><%=user.organisation.name%></dd>
+            <dd><%= user.organisation.name ? user.organisation.name : '-' %></dd>
 
             <dt>Services</dt>
             <dd>
+                <% if (user.services.length > 0) { %>
+                <ul class="inline">
                 <% for (let i = 0; i < user.services.length; i++) {%>
-                <span style="display:block;"><%=user.services[i].name%> <span style="font-size: 80%; font-style: italic;">(<%=user.services[i].role.name%>)</span></span>
+                    <li><%=user.services[i].name%> <span>(<%=user.services[i].role.name%>)</span></li>
+                <% } %>
+                </ul>
+                <% } else { %>
+                -
                 <% } %>
             </dd>
         </dl>
-    </div>
-</div>
-<div class="grid-row">
-    <div class="col-12">
+
         <form method="post" id="form-migrate-seasrch">
             <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
-            <div class="form-submit">
-                <a href="/">Cancel</a>
+            <div class="submit-buttons">
+
                 <button type="submit" class="button">Invite</button>
+                <a href="/" class="button-secondary">Cancel</a>
+
             </div>
         </form>
+
     </div>
 </div>
-
-
-<style>
-    .form-submit {
-        text-align: right;
-    }
-    .form-submit a {
-        display: inline-block;
-        margin-top: 9px;
-        margin-right: 10px;
-    }
-</style>

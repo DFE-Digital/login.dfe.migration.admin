@@ -12,15 +12,17 @@
         </h1>
         <form method="post" id="form-migrate-seasrch">
             <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
-            <fieldset>
-                <legend class="vh">Search for user to migrate</legend>
-                <div class="form-group search-criteria">
-                    <label class="vh" for="criteria">Old secure access username, email address or organisation</label>
-                    <input class="form-control full-width" id="criteria" name="criteria" type="text" required aria-required="true" placeholder="Username, email address or organisation"
-                        value="<%=criteria%>" />
-                </div>
-                <div class="form-submit">
-                    <button type="submit" class="button">Search</button>
+            <fieldset class="highlight">
+                <legend class="vh">Old secure access username, email address or organisation</legend>
+                <div class="grid-row">
+                    <div class="col-9">
+                        <label class="vh" for="criteria">Old secure access username, email address or organisation</label>
+                        <input class="form-control full-width" id="criteria" name="criteria" type="text" required aria-required="true"
+                               placeholder="Username, email address or organisation" value="<%=criteria%>" />
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="button button-full">Search</button>
+                    </div>
                 </div>
             </fieldset>
         </form>
@@ -31,13 +33,13 @@
 <div class="grid-row">
     <div class="col-12">
         <% if (locals.users.length > 0) { %>
-        <table>
+        <table class="table table-condensed">
             <thead>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Username</th>
-                <th>Org.</th>
+                <th>Organisation</th>
                 <th></th>
             </tr>
             </thead>
@@ -46,7 +48,7 @@
             <% const user = locals.users[i]; %>
             <tr>
                 <td><%=user.firstName%> <%=user.lastName.toUpperCase()%></td>
-                <td><%=user.email%></td>
+                <td><span class="breakable"> <%=user.email%> </span></td>
                 <td><%=user.username%></td>
                 <td><%=user.organisation.name%></td>
                 <td><a href="/invite/<%=user.username%>">Invite</a></td>
@@ -55,25 +57,8 @@
             </tbody>
         </table>
         <% } else { %>
-        <div style="font-weight: bold;">No users match your criteria</div>
+        <div class="empty-state">No users match your criteria</div>
         <% } %>
     </div>
 </div>
 <% } %>
-
-<style>
-    .form-control.full-width {
-        width: 100%;
-        margin-right: 200px;
-    }
-    .search-criteria {
-        display: inline-block;
-        width: 80%
-    }
-    .form-submit {
-        display: inline-block;
-        width: 18%;
-        position: relative;
-        top: -8px;
-    }
-</style>
