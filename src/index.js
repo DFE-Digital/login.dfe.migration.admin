@@ -20,9 +20,14 @@ const invite = require('./app/invite');
 const app = express();
 const config = require('./infrastructure/config');
 const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
+const appInsights = require('applicationinsights');
 
 const init = async () => {
   validateConfigAndQuitOnError(migrationAdminSchema, config, logger);
+
+  if (config.hostingEnvironment.applicationInsights) {
+    appInsights.setup(config.hostingEnvironment.applicationInsights).start();
+  }
 
   // Session
   app.use(cookieParser());
