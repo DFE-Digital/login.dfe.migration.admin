@@ -38,6 +38,10 @@ const init = async () => {
     },
   }));
 
+  if (config.hostingEnvironment.env !== 'dev') {
+    app.set('trust proxy', 1);
+  }
+
   // Session
   app.use(cookieParser());
   app.use(session({
