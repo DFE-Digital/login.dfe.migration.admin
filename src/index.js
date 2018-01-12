@@ -1,3 +1,5 @@
+const config = require('./infrastructure/config');
+const appInsights = require('applicationinsights');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -17,10 +19,8 @@ const { isLoggedIn } = require('./infrastructure/utils');
 const search = require('./app/search');
 const invite = require('./app/invite');
 
-const app = express();
-const config = require('./infrastructure/config');
 const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
-const appInsights = require('applicationinsights');
+
 const helmet = require('helmet');
 const sanitization = require('login.dfe.sanitization');
 
@@ -30,7 +30,7 @@ const init = async () => {
   if (config.hostingEnvironment.applicationInsights) {
     appInsights.setup(config.hostingEnvironment.applicationInsights).start();
   }
-
+  const app = express();
   app.use(helmet({
     noCache: true,
     frameguard: {
@@ -44,6 +44,7 @@ const init = async () => {
     resave: true,
     saveUninitialized: true,
     secret: config.hostingEnvironment.sessionSecret,
+    proxy: true,
     cookie: {
       httpOnly: true,
       secure: true,
