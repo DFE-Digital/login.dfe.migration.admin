@@ -16,6 +16,7 @@ const { isLoggedIn } = require('./infrastructure/utils');
 
 const search = require('./app/search');
 const invite = require('./app/invite');
+const healthCheck = require('login.dfe.healthcheck');
 
 const app = express();
 const config = require('./infrastructure/config');
@@ -114,6 +115,7 @@ const init = async () => {
   app.set('layout', 'layouts/layout');
 
   // Routes
+  app.use('/healthcheck', healthCheck({ config }));
   app.use('/', search());
   app.use('/invite', invite());
 
