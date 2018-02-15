@@ -17,25 +17,32 @@ const loggerConfig = {
     debug: 5,
     silly: 6,
   },
-  colors: (config && config.loggerSettings && config.loggerSettings.colors) ? config.loggerSettings.colors : null,
+  colors: {
+    info: 'yellow',
+    ok: 'green',
+    error: 'red',
+    audit: 'magenta',
+  },
   transports: [],
 };
 
 loggerConfig.transports.push(new (winston.transports.Console)({ level: logLevel, colorize: true }));
 if (config && config.loggerSettings && config.loggerSettings.redis && config.loggerSettings.redis.enabled) {
+  const tls = winston.transports.Redis.port.includes('6380');
   loggerConfig.transports.push(new (winston.transports.Redis)({
     level: 'audit',
     length: 4294967295,
     host: config.loggerSettings.redis.host,
     port: config.loggerSettings.redis.port,
     auth: config.loggerSettings.redis.auth,
+    tls
   }));
 }
 
 const logger = new (winston.Logger)(loggerConfig);
 
 process.on('unhandledRejection', (reason, p) => {
-  logger.error('Unhandled Rejection at:', p, 'reason:', reason);
+  logger.error(`Unhandled Rejection at: ${p} reason: ${reason}`);
 });
 
 module.exports = logger;

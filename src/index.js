@@ -16,13 +16,32 @@ const { isLoggedIn } = require('./infrastructure/utils');
 
 const search = require('./app/search');
 const invite = require('./app/invite');
+const healthCheck = require('login.dfe.healthcheck');
 
 const app = express();
 const config = require('./infrastructure/config');
 const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
+const appInsights = require('applicationinsights');
+const helmet = require('helmet');
+const sanitization = require('login.dfe.sanitization');
 
 const init = async () => {
   validateConfigAndQuitOnError(migrationAdminSchema, config, logger);
+
+  if (config.hostingEnvironment.applicationInsights) {
+    appInsights.setup(config.hostingEnvironment.applicationInsights).start();
+  }
+
+  app.use(helmet({
+    noCache: true,
+    frameguard: {
+      action: 'deny',
+    },
+  }));
+
+  if (config.hostingEnvironment.env !== 'dev') {
+    app.set('trust proxy', 1);
+  }
 
   // Session
   app.use(cookieParser());
@@ -30,6 +49,10 @@ const init = async () => {
     resave: true,
     saveUninitialized: true,
     secret: config.hostingEnvironment.sessionSecret,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+    },
   }));
 
   // Auth
@@ -72,7 +95,13 @@ const init = async () => {
 
   // Postbacks
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(csrf({ cookie: true }));
+  app.use(sanitization());
+  app.use(csrf({
+    cookie: {
+      secure: true,
+      httpOnly: true,
+    },
+  }));
   app.use(flash());
 
   // Logging
@@ -86,6 +115,7 @@ const init = async () => {
   app.set('layout', 'layouts/layout');
 
   // Routes
+  app.use('/healthcheck', healthCheck({ config }));
   app.use('/', search());
   app.use('/invite', invite());
 
