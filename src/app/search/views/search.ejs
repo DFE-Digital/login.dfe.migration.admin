@@ -1,9 +1,8 @@
-
 <div class="grid-row">
     <div class="col-12">
         <% if (locals.flash.info) { %>
         <div class="notification notification-success">
-            <%=locals.flash.info%>
+            <%= locals.flash.info %>
         </div>
         <% } %>
 
@@ -11,31 +10,31 @@
             Search for user to migrate
         </h1>
         <form method="post" id="form-migrate-seasrch">
-            <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
             <fieldset class="highlight">
                 <legend class="vh">Old secure access username, email address or organisation</legend>
                 <div class="grid-row">
                     <label for="system">System to search in</label>
                     <select class="form-control" id="system" name="system">
-                        <option value="OSA" <%=(system==='OSA' ? 'selected' : '')%>>OSA</option>
-                        <option value="EAS" <%=(system==='EAS' ? 'selected' : '')%>>EAS</option>
+                        <option value="OSA" <%= (system === 'OSA' ? 'selected' : '') %>>OSA</option>
+                        <option value="EAS" <%= (system === 'EAS' ? 'selected' : '') %>>EAS</option>
                     </select>
                 </div>
-		<div class="col-9">
-                        <label class="vh" for="criteria">Old secure access username, email address or organisation</label>
-                        <input class="form-control full-width" id="criteria" name="criteria" type="text" required aria-required="true"
-                               placeholder="Username, email address or organisation" value="<%=criteria%>" />
-                    </div>
-                    <div class="col-3">
-                        <button type="submit" class="button button-full">Search</button>
-                    </div>
+                <div class="col-9">
+                    <label class="vh" for="criteria">Old secure access username, email address or organisation</label>
+                    <input class="form-control full-width" id="criteria" name="criteria" type="text" required
+                           aria-required="true"
+                           placeholder="Username, email address or organisation" value="<%= criteria %>"/>
+                </div>
+                <div class="col-3">
+                    <button type="submit" class="button button-full">Search</button>
                 </div>
             </fieldset>
         </form>
     </div>
 </div>
 
-<% if (locals.users) {%>
+<% if (locals.users) { %>
 <div class="grid-row">
     <div class="col-12">
         <% if (locals.users.length > 0) { %>
@@ -53,11 +52,11 @@
             <% for (let i = 0; i < locals.users.length; i++) { %>
             <% const user = locals.users[i]; %>
             <tr>
-                <td><%=user.firstName%> <%=user.lastName.toUpperCase()%></td>
-                <td><span class="breakable"> <%=user.email%> </span></td>
-                <td><%=user.username%></td>
-                <td><%=user.organisation.name%></td>
-                <td><a href="/invite/<%=user.username%>">Invite</a></td>
+                <td><%= user.firstName %> <%= user.lastName.toUpperCase() %></td>
+                <td><span class="breakable"> <%= user.email %> </span></td>
+                <td><%= user.username %></td>
+                <td><%= user.organisation.name %></td>
+                <td><a href="/invite/<%= user.username %>">Invite</a></td>
             </tr>
             <% } %>
             </tbody>
