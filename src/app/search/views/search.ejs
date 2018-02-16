@@ -56,7 +56,7 @@
                 <td><span class="breakable"> <%= user.email %> </span></td>
                 <td><%= user.username %></td>
                 <td><%= user.organisation.name %></td>
-                <td><a href="/invite/<%= user.username %>">Invite</a></td>
+                <td><a href="/invite/<%=system%>/<%= user.username %>">Invite</a></td>
             </tr>
             <% } %>
             </tbody>

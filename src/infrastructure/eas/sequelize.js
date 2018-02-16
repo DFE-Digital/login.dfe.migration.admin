@@ -26,10 +26,42 @@ const searchForUsers = async (criteria) => {
         name: 'Key to Success',
         role: { id: 0, name: 'End user' },
       }],
+      tokenSerialNumber: entity.dataValues.serialNumber,
     };
   });
 };
 
+const getUserByUsername = async (username) => {
+  const userEntity = await ktsUsers.find({
+    where: {
+      logonName: {
+        [Op.eq]: username,
+      },
+    },
+  });
+  if (!userEntity) {
+    return null;
+  }
+
+  return {
+    firstName: userEntity.dataValues.firstName,
+    lastName: userEntity.dataValues.surname,
+    email: userEntity.dataValues.email,
+    username: userEntity.dataValues.logonName,
+    organisation: {
+      id: '72711ff9-2da1-4135-8a20-3de1fea31073',
+      name: 'Local Authority',
+    },
+    services: [{
+      id: '',
+      name: 'Key to Success',
+      role: { id: 0, name: 'End user' },
+    }],
+    tokenSerialNumber: userEntity.dataValues.serialNumber,
+  };
+};
+
 module.exports = {
   searchForUsers,
+  getUserByUsername,
 };

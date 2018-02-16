@@ -47,6 +47,9 @@ const ktsUsers = db.define('KTSUsers', {
   ktsId: {
     type: Sequelize.STRING
   },
+  serialNumber: {
+    type: Sequelize.STRING
+  },
 }, {
   tableName: 'KTSUsers',
   timestamps: false,
