@@ -1,5 +1,6 @@
 const { ktsUsers } = require('./schemas/easKtsSchema');
 const { Op } = require('sequelize');
+const config = require('./../config');
 
 const searchForUsers = async (criteria) => {
   const userEntities = await ktsUsers.findAll({
@@ -49,11 +50,11 @@ const getUserByUsername = async (username) => {
     email: userEntity.dataValues.email,
     username: userEntity.dataValues.logonName,
     organisation: {
-      id: '72711ff9-2da1-4135-8a20-3de1fea31073',
+      id: config.eas.laOrganisationId,
       name: 'Local Authority',
     },
     services: [{
-      id: '',
+      id: config.eas.ktsServiceId,
       name: 'Key to Success',
       role: { id: 0, name: 'End user' },
     }],
