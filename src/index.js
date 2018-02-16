@@ -65,6 +65,7 @@ const init = async () => {
   });
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use('/healthcheck', healthCheck({ config }));
   app.get('/auth', passport.authenticate('oidc'));
   app.get('/auth/cb', (req, res, next) => {
     passport.authenticate('oidc', (err, user) => {
@@ -115,7 +116,7 @@ const init = async () => {
   app.set('layout', 'layouts/layout');
 
   // Routes
-  app.use('/healthcheck', healthCheck({ config }));
+
   app.use('/', search());
   app.use('/invite', invite());
 
