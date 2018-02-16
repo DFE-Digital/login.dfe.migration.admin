@@ -20,13 +20,14 @@ const healthCheck = require('login.dfe.healthcheck');
 
 const app = express();
 const config = require('./infrastructure/config');
-const { migrationAdminSchema, validateConfigAndQuitOnError } = require('login.dfe.config.schema');
+const { migrationAdminSchema, validateConfig } = require('login.dfe.config.schema');
 const appInsights = require('applicationinsights');
 const helmet = require('helmet');
 const sanitization = require('login.dfe.sanitization');
 
 const init = async () => {
-  validateConfigAndQuitOnError(migrationAdminSchema, config, logger);
+  const useStrictValidation = config.hostingEnvironment.env !== 'dev';
+  validateConfig(migrationAdminSchema, config, logger, useStrictValidation);
 
   if (config.hostingEnvironment.applicationInsights) {
     appInsights.setup(config.hostingEnvironment.applicationInsights).start();
