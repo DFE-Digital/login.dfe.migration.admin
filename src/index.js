@@ -91,7 +91,6 @@ const init = async () => {
       });
     })(req, res, next);
   });
-  app.use(isLoggedIn);
 
   // Postbacks
   app.use(bodyParser.urlencoded({ extended: true }));
@@ -116,6 +115,8 @@ const init = async () => {
 
   // Routes
   app.use('/healthcheck', healthCheck({ config }));
+
+  app.use(isLoggedIn);
   app.use('/', search());
   app.use('/invite', invite());
 
