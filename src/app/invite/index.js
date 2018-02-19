@@ -8,8 +8,8 @@ const getConfirm = require('./getConfirm');
 const postConfirm = require('./postConfirm');
 
 const routes = () => {
-  router.get('/:username', getConfirm);
-  router.post('/:username', postConfirm);
+  router.get('/:system/:username', getConfirm);
+  router.post('/:system/:username', postConfirm);
 
   return router;
 };
