@@ -28,6 +28,7 @@ const searchForUsers = async (criteria) => {
         role: { id: 0, name: 'End user' },
       }],
       tokenSerialNumber: entity.dataValues.serialNumber,
+      ktsId: entity.dataValues.ktsId,
     };
   });
 };
@@ -59,6 +60,7 @@ const getUserByUsername = async (username) => {
       role: { id: 0, name: 'End user' },
     }],
     tokenSerialNumber: userEntity.dataValues.serialNumber,
+    ktsId: userEntity.dataValues.ktsId,
   };
 };
 

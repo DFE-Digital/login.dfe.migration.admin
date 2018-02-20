@@ -22,7 +22,7 @@ const action = async (req, res) => {
     serviceId: service.id,
     roleId: service.role.id,
   }));
-  await jobsClient.sendInvite(user.email, user.firstName, user.lastName, services, user.username, user.password, user.salt, user.tokenSerialNumber);
+  await jobsClient.sendInvite(user.email, user.firstName, user.lastName, services, user.username, user.password, user.salt, user.tokenSerialNumber, user.ktsId);
 
   res.flash('info', `Successfully invited ${user.email}`);
   res.redirect('/');
