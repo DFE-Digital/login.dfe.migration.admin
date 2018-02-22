@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const session = require('express-session');
+const session = require('cookie-session');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
 const logger = require('./infrastructure/logger');
@@ -33,6 +33,14 @@ const init = async () => {
     appInsights.setup(config.hostingEnvironment.applicationInsights).start();
   }
 
+  let expiryInMinutes = 30;
+  const sessionExpiry = parseInt(config.hostingEnvironment.sessionCookieExpiryInMinutes);
+  if (!isNaN(sessionExpiry)) {
+    expiryInMinutes = sessionExpiry;
+  }
+
+  const expiryDate = new Date(Date.now() + (60 * expiryInMinutes * 1000));
+
   app.use(helmet({
     noCache: true,
     frameguard: {
@@ -53,6 +61,7 @@ const init = async () => {
     cookie: {
       httpOnly: true,
       secure: true,
+      expires: expiryDate,
     },
   }));
 
