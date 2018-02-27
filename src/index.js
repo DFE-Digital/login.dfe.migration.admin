@@ -1,10 +1,12 @@
+const config = require('./infrastructure/config');
+const logger = require('./infrastructure/logger');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('cookie-session');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
-const logger = require('./infrastructure/logger');
+
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
@@ -19,9 +21,8 @@ const invite = require('./app/invite');
 const healthCheck = require('login.dfe.healthcheck');
 
 const app = express();
-const config = require('./infrastructure/config');
+
 const { migrationAdminSchema, validateConfig } = require('login.dfe.config.schema');
-const appInsights = require('applicationinsights');
 const helmet = require('helmet');
 const sanitization = require('login.dfe.sanitization');
 
@@ -29,9 +30,6 @@ const init = async () => {
   const useStrictValidation = config.hostingEnvironment.env !== 'dev';
   validateConfig(migrationAdminSchema, config, logger, useStrictValidation);
 
-  if (config.hostingEnvironment.applicationInsights) {
-    appInsights.setup(config.hostingEnvironment.applicationInsights).start();
-  }
 
   let expiryInMinutes = 30;
   const sessionExpiry = parseInt(config.hostingEnvironment.sessionCookieExpiryInMinutes);
