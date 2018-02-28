@@ -30,15 +30,6 @@ const init = async () => {
   const useStrictValidation = config.hostingEnvironment.env !== 'dev';
   validateConfig(migrationAdminSchema, config, logger, useStrictValidation);
 
-
-  let expiryInMinutes = 30;
-  const sessionExpiry = parseInt(config.hostingEnvironment.sessionCookieExpiryInMinutes);
-  if (!isNaN(sessionExpiry)) {
-    expiryInMinutes = sessionExpiry;
-  }
-
-  const expiryDate = new Date(Date.now() + (60 * expiryInMinutes * 1000));
-
   app.use(helmet({
     noCache: true,
     frameguard: {
@@ -52,16 +43,22 @@ const init = async () => {
 
   // Session
   app.use(cookieParser());
+
+  let expiryInMinutes = 30;
+  const sessionExpiry = parseInt(config.hostingEnvironment.sessionCookieExpiryInMinutes);
+  if (!isNaN(sessionExpiry)) {
+    expiryInMinutes = sessionExpiry;
+  }
   app.use(session({
-    resave: true,
-    saveUninitialized: true,
-    secret: config.hostingEnvironment.sessionSecret,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      expires: expiryDate,
-    },
+    keys: [config.hostingEnvironment.sessionSecret],
+    maxAge: expiryInMinutes * 60000, // Expiry in milliseconds
+    httpOnly: true,
+    secure: true,
   }));
+  app.use((req, res, next) => {
+    req.session.now = Date.now();
+    next();
+  });
 
   // Auth
   passport.use('oidc', await getPassportStrategy());
