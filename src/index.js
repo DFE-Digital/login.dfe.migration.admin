@@ -15,16 +15,16 @@ const csrf = require('csurf');
 const flash = require('express-flash-2');
 const { getPassportStrategy } = require('./infrastructure/oidc');
 const { isLoggedIn } = require('./infrastructure/utils');
+const { migrationAdminSchema, validateConfig } = require('login.dfe.config.schema');
+const helmet = require('helmet');
+const sanitization = require('login.dfe.sanitization');
+const { getErrorHandler, ejsErrorPages } = require('login.dfe.express-error-handling');
 
 const search = require('./app/search');
 const invite = require('./app/invite');
 const healthCheck = require('login.dfe.healthcheck');
 
 const app = express();
-
-const { migrationAdminSchema, validateConfig } = require('login.dfe.config.schema');
-const helmet = require('helmet');
-const sanitization = require('login.dfe.sanitization');
 
 const init = async () => {
   const useStrictValidation = config.hostingEnvironment.env !== 'dev';
@@ -124,6 +124,15 @@ const init = async () => {
   app.use(isLoggedIn);
   app.use('/', search());
   app.use('/invite', invite());
+
+  // Error handler
+  const errorPageRenderer = ejsErrorPages.getErrorPageRenderer({
+    help: config.hostingEnvironment.helpUrl,
+  }, config.hostingEnvironment.env === 'dev');
+  app.use(getErrorHandler({
+    logger,
+    errorPageRenderer,
+  }));
 
   // Http listener
   if (config.hostingEnvironment.env === 'dev') {
