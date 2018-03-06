@@ -43,7 +43,7 @@
     "openpgp": "^2.5.13",
     "passport": "^0.4.0",
     "pg": "^7.4.0",
-    "sequelize": "^4.22.5",
+    "sequelize": "^4.35.2",
     "winston": "^2.4.0",
     "winston-azure-application-insights": "^1.1.1",
     "winston-redis": "^1.0.0"
