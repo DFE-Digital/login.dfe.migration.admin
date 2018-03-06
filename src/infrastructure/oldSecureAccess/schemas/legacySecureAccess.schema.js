@@ -1,11 +1,66 @@
 const config = require('./../../config');
 const Sequelize = require('sequelize');
+const assert = require('assert');
+
+const getIntValueOrDefault = (value, defaultValue = 0) => {
+  if (!value) {
+    return defaultValue;
+  }
+  const int = parseInt(value);
+  return isNaN(int) ? defaultValue : int;
+};
+
 
 if (!config.oldSecureAccess.params || !config.oldSecureAccess.params.legacyConnectionString) {
-  throw new Error('Must provide config oldSecureAccess.params.legacyConnectionString');
+  assert(config.oldSecureAccess.params,'Must provide config oldSecureAccess.params.legacyConnectionString');
 }
 
-const db = new Sequelize(config.oldSecureAccess.params.legacyConnectionString);
+const databaseName = config.eas.params.name || 'postgres';
+const encryptDb = config.eas.params.encrypt || false;
+
+let db;
+if (config.oldSecureAccess.params.connectionString) {
+  db = new Sequelize(config.oldSecureAccess.params.connectionString);
+} else {
+  assert(config.oldSecureAccess.params.username, 'Database property username must be supplied');
+  assert(config.oldSecureAccess.params.password, 'Database property password must be supplied');
+  assert(config.oldSecureAccess.params.host, 'Database property host must be supplied');
+  assert(config.oldSecureAccess.params.dialect, 'Database property dialect must be supplied, this must be postgres or mssql');
+
+  const dbOpts = {
+    retry: {
+      match: [
+        /SequelizeConnectionError/,
+        /SequelizeConnectionRefusedError/,
+        /SequelizeHostNotFoundError/,
+        /SequelizeHostNotReachableError/,
+        /SequelizeInvalidConnectionError/,
+        /SequelizeConnectionTimedOutError/,
+        /TimeoutError/,
+      ],
+      name: 'query',
+      backoffBase: 100,
+      backoffExponent: 1.1,
+      timeout: 60000,
+      max: 5,
+    },
+    host: config.oldSecureAccess.params.host,
+    dialect: config.oldSecureAccess.params.dialect,
+    dialectOptions: {
+      encrypt: encryptDb,
+    },
+  };
+  if (config.oldSecureAccess.params.pool) {
+    dbOpts.pool = {
+      max: getIntValueOrDefault(config.oldSecureAccess.params.pool.max, 5),
+      min: getIntValueOrDefault(config.oldSecureAccess.params.pool.min, 0),
+      acquire: getIntValueOrDefault(config.oldSecureAccess.params.pool.acquire, 10000),
+      idle: getIntValueOrDefault(config.oldSecureAccess.params.pool.idle, 10000),
+    };
+  }
+
+  db = new Sequelize(databaseName, config.oldSecureAccess.params.username, config.oldSecureAccess.params.password, dbOpts);
+}
 
 const users = db.define('safe_user', {
   id: {
