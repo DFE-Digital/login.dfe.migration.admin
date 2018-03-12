@@ -7,6 +7,7 @@ const session = require('cookie-session');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
 
+const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
@@ -19,10 +20,24 @@ const { migrationAdminSchema, validateConfig } = require('login.dfe.config.schem
 const helmet = require('helmet');
 const sanitization = require('login.dfe.sanitization');
 const { getErrorHandler, ejsErrorPages } = require('login.dfe.express-error-handling');
+const KeepAliveAgent = require('agentkeepalive');
 
 const search = require('./app/search');
 const invite = require('./app/invite');
 const healthCheck = require('login.dfe.healthcheck');
+
+http.GlobalAgent = new KeepAliveAgent({
+  maxSockets: 10,
+  maxFreeSockets: 2,
+  timeout: 60000,
+  keepAliveTimeout: 300000,
+});
+https.GlobalAgent = new KeepAliveAgent({
+  maxSockets: 10,
+  maxFreeSockets: 2,
+  timeout: 60000,
+  keepAliveTimeout: 300000,
+});
 
 const app = express();
 
