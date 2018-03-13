@@ -91,6 +91,10 @@ const init = async () => {
       let redirectUrl = '/';
 
       if (err) {
+        if (err.message === 'state mismatch') {
+          req.session = null;
+          return res.redirect('/');
+        }
         return next(err);
       }
       if (!user) {
