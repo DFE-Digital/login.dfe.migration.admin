@@ -1,6 +1,7 @@
 const config = require('./../../config');
 const Sequelize = require('sequelize');
 const assert = require('assert');
+const Op = Sequelize.Op;
 
 const getIntValueOrDefault = (value, defaultValue = 0) => {
   if (!value) {
@@ -46,6 +47,7 @@ if (config.oldSecureAccess.params.connectionString) {
     },
     host: config.oldSecureAccess.params.host,
     dialect: config.oldSecureAccess.params.dialect,
+    operatorsAliases: Op,
     dialectOptions: {
       encrypt: encryptDb,
     },

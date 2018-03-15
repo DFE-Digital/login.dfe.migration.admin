@@ -1,6 +1,7 @@
 const config = require('./../../config');
 const Sequelize = require('sequelize');
 const assert = require('assert');
+const Op = Sequelize.Op;
 
 const getIntValueOrDefault = (value, defaultValue = 0) => {
   if (!value) {
@@ -44,6 +45,7 @@ if (config.eas.params.connectionString) {
     },
     host: config.eas.params.host,
     dialect: config.eas.params.dialect,
+    operatorsAliases: Op,
     dialectOptions: {
       encrypt: encryptDb,
     },
