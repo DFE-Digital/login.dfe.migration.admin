@@ -77,6 +77,7 @@ const readCsvFile = async (filePath) => {
 const run = async () => {
   const args = await readAndValidateArgs();
   const users = await readCsvFile(args.usersCsvPath);
+  const usersToInvite = users.filter(u => u.tokenSerialNumber !== undefined && u.tokenSerialNumber !== null && u.tokenSerialNumber.trim().length > 0);
   const services = [{
     organisationId: 'fa460f7c-8ab9-4cee-aaff-82d6d341d702',
     serviceId: '3bfde961-f061-4786-b618-618deaf96e44',
@@ -86,15 +87,17 @@ const run = async () => {
   const jobsClient = new MigrationAdminJobsClient({
     connectionString: args.jobsConnectionString,
   });
-  for (let i = 0; i < users.length; i++) {
-    const user = users[i];
+  for (let i = 0; i < usersToInvite.length; i++) {
+    const user = usersToInvite[i];
     await jobsClient.sendInvite(user.email, user.firstName, user.lastName, services, user.username, null, null, user.tokenSerialNumber, user.ktsId);
     console.info(`Queued invite for ${user.email} (kts-id ${user.ktsId})`);
   }
+
+  return usersToInvite.length;
 };
 
-run().then(() => {
-  console.info('done');
+run().then((numberOfUsersInvited) => {
+  console.info(`DONE. Invited ${numberOfUsersInvited} users`);
 }).catch((e) => {
   console.error(e.message);
 });
